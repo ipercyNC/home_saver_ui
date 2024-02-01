@@ -2,14 +2,9 @@ import { FormEvent, useEffect, useState } from 'react'
 import axios from 'axios'
 import { User } from '../models/User'
 import Dwelling from './Dwelling'
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { Alert, FormControl, Modal, OutlinedInput, TextField } from '@mui/material';
+import {Box, Button, Typography, Toolbar, IconButton, AppBar} from '@mui/material';
 
 function Dashboard() {
     const [users, setUsers] = useState([])
@@ -57,21 +52,23 @@ function Dashboard() {
     function handleLoginClose() {
         setLoginModalOpen(false)
     }
-    function handleSubmit(){
-        axios.post("http://localhost:8080/auth", {username: "jstanley", password: ""}, {headers: {
-            'Content-Type': 'text/json'
-        }})
-        .then(response => {
-            const newUser = new User(response.data.id, response.data.username, response.data.email)
-            setUser(newUser)
-            setLoginModalOpen(false)
+    function handleSubmit() {
+        axios.post("http://localhost:8080/auth", { username: "jstanley", password: "password" }, {
+            headers: {
+                'Content-Type': 'text/json'
+            }
         })
-        .catch(error => {
-            console.log(error)
-            setErrorMessage("Login Unsuccessful. Please try again.")
-            setTimeout(() => setErrorMessage(""), 5000);
-            setLoginModalOpen(false)
-        })
+            .then(response => {
+                const newUser = new User(response.data.id, response.data.username, response.data.email)
+                setUser(newUser)
+                setLoginModalOpen(false)
+            })
+            .catch(error => {
+                console.log(error)
+                setErrorMessage("Login Unsuccessful. Please try again.")
+                setTimeout(() => setErrorMessage(""), 5000);
+                setLoginModalOpen(false)
+            })
     }
 
     return (
@@ -100,10 +97,14 @@ function Dashboard() {
                         }
                     </Toolbar>
                 </AppBar>
-                {errorMessage? 
+                {errorMessage ?
                     <Alert severity="error"> {errorMessage}</Alert>
-                    :<></>
+                    : <></>
 
+                }
+                {user && user.getUsername() && dwellings.length !== 0 ?
+                    dwellings.map(d => <Dwelling dwelling={d} />)
+                    : <button onClick={getDwellings}>Get Dwellings</button>
                 }
                 {/* <div>
                 <span>
@@ -111,9 +112,7 @@ function Dashboard() {
                         users.map(u => <User user={u} />)
                         : <button onClick={getUsers}>Get Users</button>
                     }
-                    {dwellings.length !== 0?
-                        dwellings.map(d => <Dwelling dwelling={d} />)
-                        : <button onClick={getDwellings}>Get Dwellings</button>}
+
                 </span>
             </div> */}
                 <Modal
@@ -132,7 +131,7 @@ function Dashboard() {
                                 label="Username"
                                 placeholder="Username"
                                 value={username}
-                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => { setUsername(event.target.value)}}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => { setUsername(event.target.value) }}
                                 InputLabelProps={{
                                     style: { color: "white" }
                                 }}
@@ -143,7 +142,7 @@ function Dashboard() {
                                 placeholder="Password"
                                 type="password"
                                 value={password}
-                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => { setPassword(event.target.value)}}
+                                onChange={(event: React.ChangeEvent<HTMLInputElement>) => { setPassword(event.target.value) }}
                                 InputLabelProps={{
                                     style: { color: "white" }
                                 }}
